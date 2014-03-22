@@ -64,6 +64,10 @@ o = AnyOldClass.new
 o.anyOldMethod # will work
 ~~~
 
+### Iron Ruby versions
+
+The Ruby examples were developed and tested using Iron Ruby 1.1.3, running on .NET 4.5. However, at least one user has reported problems with this combination. The issues we've seen occur in trying to initialise a .NET array of Type objects (eg with `System::Array.of(System::Type).new(0))`), with a complaint about no default constructor. This error has been avoided by compiling Iron Ruby 1.1.4 from [source][irsource].
+
 
 ## Feedback
 
@@ -73,5 +77,6 @@ If you find ironFilings useful (or not) I'd certainly like to here it.
 
 ironFilings is licensed under the [LGPLv3]
 
+[irsource]: https://github.com/IronLanguages
 [source]: http://www.ewater.com.au/products/ewater-source/
 [LGPLv3]: http://www.gnu.org/copyleft/lesser.html
