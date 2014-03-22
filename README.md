@@ -25,6 +25,46 @@ I suspect that IronPython will appeal to more eWater Source users.
 
 After installing one or more IronLanguages and downloading or cloning the ironFilings repo, you can explore the various scripts. Note, Source currently requires much of its data access layer to be configured via xml configuration files, which, because of the way IronRuby runs, needs to be associated with the IronRuby executable. The path of least resistance is to place these files (available in the rb directory) into the bin directory under the IronRuby installation. This is not at all a nice solution!
 
+## Some common traps
+
+### Name Conversions
+
+The Ruby convention for method and property names is `lower_case_with_underscores`, as opposed to the .NET convention of `CamelCase`. IronyRuby attempts convert for you, so if the .NET class has a method called `MethodName`, asking an object of that class for its `.methods` from IronRuby will include `method_name`. 
+
+For example, with the following C# class
+
+~~~csharp
+public class AnyOldClass {
+  public void AnyOldMethod() { }
+}
+~~~
+
+then the following IronRuby code will work:
+
+~~~ruby
+o = AnyOldClass.new
+o.any_old_method
+~~~
+
+The problems come when the methods in the .NET class _don't follow the .NET naming conventions. A common one in the Source codebase at the time of writing is to lead with a lower case letter (ala Java conventions):
+
+~~~csharp
+public class AnyOldClass {
+  public void anyOldMethod() { }
+}
+~~~
+
+IronRuby will still convert the C# `anyOldMethod()` to the Ruby name `any_old_method` and this will get listed in a call to `.methods`, BUT if you attempt to call it, then it will fail with an `undefined method` error, because it's tried to __convert back__ to `AnyOldMethod`, which doesn't exist.
+
+The solution in these circumstances to use the actual C# name in your Ruby. ie
+
+~~~ruby
+o = AnyOldClass.new
+# o.any_old_method WON'T work
+o.anyOldMethod # will work
+~~~
+
+
 ## Feedback
 
 If you find ironFilings useful (or not) I'd certainly like to here it.
